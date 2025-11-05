@@ -1,23 +1,23 @@
-import { useState } from 'react';
-import { useRoute, useLocation } from 'wouter';
-import { useStore } from '@/lib/store';
-import { ArrowLeft, Heart, MessageCircle, Tag } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import CommentSheet from '@/components/CommentSheet';
-import BidSheet from '@/components/BidSheet';
-import BottomNav from '@/components/BottomNav';
+import { useState } from "react";
+import { useRoute, useLocation } from "wouter";
+import { useStore } from "@/lib/store";
+import { ArrowLeft, Heart, MessageCircle, Tag } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import CommentSheet from "@/components/CommentSheet";
+import BidSheet from "@/components/BidSheet";
+import BottomNav from "@/components/BottomNav";
 
 export default function PostDetail() {
-  const [, params] = useRoute('/post/:id');
+  const [, params] = useRoute("/post/:id");
   const [, setLocation] = useLocation();
   const { posts, currentUser, toggleLike, addComment, addBid } = useStore();
   const [showComments, setShowComments] = useState(false);
   const [showBids, setShowBids] = useState(false);
 
-  const post = posts.find(p => p.id === params?.id);
+  const post = posts.find((p) => p.id === params?.id);
 
   if (!post) {
     return (
@@ -64,20 +64,22 @@ export default function PostDetail() {
           <Button
             size="icon"
             variant="ghost"
-            onClick={() => setLocation('/')}
+            onClick={() => setLocation("/")}
             data-testid="button-back"
           >
             <ArrowLeft className="w-5 h-5" />
           </Button>
-          <h1 className="text-xl font-bold" data-testid="text-detail-title">Detail Pekerjaan</h1>
+          <h1 className="text-xl font-bold" data-testid="text-detail-title">
+            Detail Pekerjaan
+          </h1>
         </div>
       </header>
 
       <ScrollArea className="h-[calc(100vh-8rem)]">
         <div className="max-w-lg mx-auto">
           <div className="aspect-square bg-muted">
-            <img 
-              src={post.image} 
+            <img
+              src={post.image}
               alt={post.description}
               className="w-full h-full object-cover"
               data-testid="img-post-detail"
@@ -89,38 +91,58 @@ export default function PostDetail() {
               <div className="flex items-center gap-3">
                 <Avatar className="w-12 h-12 border-2 border-muted">
                   <AvatarImage src={post.avatar} alt={post.username} />
-                  <AvatarFallback>{post.username[0]?.toUpperCase()}</AvatarFallback>
+                  <AvatarFallback>
+                    {post.username[0]?.toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
                 <div>
-                  <p className="font-semibold" data-testid="text-detail-username">{post.username}</p>
+                  <p
+                    className="font-semibold"
+                    data-testid="text-detail-username"
+                  >
+                    {post.username}
+                  </p>
                   <p className="text-xs text-muted-foreground">
-                    {new Date(post.createdAt).toLocaleDateString('id-ID', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
+                    {new Date(post.createdAt).toLocaleDateString("id-ID", {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
                     })}
                   </p>
                 </div>
               </div>
-              <Badge variant="default" data-testid="badge-detail-category">{post.category}</Badge>
+              <Badge variant="default" data-testid="badge-detail-category">
+                {post.category}
+              </Badge>
             </div>
 
             <div>
-              <p className="leading-relaxed" data-testid="text-detail-description">{post.description}</p>
+              <p
+                className="leading-relaxed text-sm"
+                data-testid="text-detail-description"
+              >
+                {post.description}
+              </p>
             </div>
 
-            <div className="flex items-center gap-6 py-3 border-y border-border">
+            <div className="flex items-center gap-2 py-3 border-y border-border justify-between">
               <button
                 onClick={handleLike}
                 className="flex items-center gap-2 hover-elevate rounded-md px-3 py-2"
                 data-testid="button-detail-like"
               >
-                <Heart 
-                  className={`w-6 h-6 transition-all ${
-                    isLiked ? 'fill-destructive text-destructive' : 'text-muted-foreground'
-                  }`} 
+                <Heart
+                  className={`w-4 h-4 transition-all ${
+                    isLiked
+                      ? "fill-destructive text-destructive"
+                      : "text-muted-foreground"
+                  }`}
                 />
-                <span className={`font-medium ${isLiked ? 'text-destructive' : ''}`}>
+                <span
+                  className={`font-medium text-xs ${
+                    isLiked ? "text-destructive" : ""
+                  }`}
+                >
                   {post.likes.length} Suka
                 </span>
               </button>
@@ -130,8 +152,10 @@ export default function PostDetail() {
                 className="flex items-center gap-2 hover-elevate rounded-md px-3 py-2"
                 data-testid="button-detail-comment"
               >
-                <MessageCircle className="w-6 h-6 text-muted-foreground" />
-                <span className="font-medium">{post.comments.length} Komentar</span>
+                <MessageCircle className="4 h-4 text-muted-foreground" />
+                <span className="font-medium text-xs">
+                  {post.comments.length} Komentar
+                </span>
               </button>
 
               <button
@@ -139,21 +163,23 @@ export default function PostDetail() {
                 className="flex items-center gap-2 hover-elevate rounded-md px-3 py-2"
                 data-testid="button-detail-bid"
               >
-                <Tag className="w-6 h-6 text-muted-foreground" />
-                <span className="font-medium">{post.bids.length} Penawaran</span>
+                <Tag className="4 h-4 text-muted-foreground" />
+                <span className="font-medium text-xs">
+                  {post.bids.length} Penawaran
+                </span>
               </button>
             </div>
 
             <div className="flex gap-2">
-              <Button 
-                className="flex-1" 
+              <Button
+                className="flex-1"
                 onClick={() => setShowBids(true)}
                 data-testid="button-detail-bid-action"
               >
                 Buat Penawaran
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="flex-1"
                 onClick={() => setShowComments(true)}
                 data-testid="button-detail-comment-action"
