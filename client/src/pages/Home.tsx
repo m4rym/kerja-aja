@@ -89,8 +89,101 @@ export default function Home() {
         },
       ];
       
-      mockPosts.forEach(post => {
-        useStore.getState().addPost(post);
+      mockPosts.forEach((post, index) => {
+        const newPost = useStore.getState().addPost(post);
+        
+        if (index === 0) {
+          const posts = useStore.getState().posts;
+          const firstPost = posts[0];
+          
+          useStore.getState().addBid(firstPost.id, {
+            userId: 'bidder1',
+            username: 'BudiGraphics',
+            amount: 500000,
+            message: 'Saya siap mengerjakan dengan profesional!',
+          });
+          useStore.getState().addBid(firstPost.id, {
+            userId: 'bidder2',
+            username: 'DesignPro',
+            amount: 750000,
+            message: 'Portfolio 10 tahun, hasil memuaskan!',
+          });
+          useStore.getState().addBid(firstPost.id, {
+            userId: 'bidder3',
+            username: 'CreativeStudio',
+            amount: 600000,
+            message: 'Fast response & revision unlimited!',
+          });
+          
+          useStore.getState().addComment(firstPost.id, {
+            userId: 'comm1',
+            username: 'Siti',
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Siti',
+            text: 'Wah keren banget! Boleh lihat portfolio nya?',
+          });
+          useStore.getState().addComment(firstPost.id, {
+            userId: 'comm2',
+            username: 'Ahmad',
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmad',
+            text: 'Berapa lama pengerjaan untuk logo + branding lengkap?',
+          });
+        }
+        
+        if (index === 1) {
+          const posts = useStore.getState().posts;
+          const secondPost = posts[1];
+          
+          useStore.getState().addBid(secondPost.id, {
+            userId: 'bidder4',
+            username: 'TukangJaya',
+            amount: 15000000,
+            message: 'Berpengalaman renovasi 100+ rumah',
+          });
+          
+          useStore.getState().addComment(secondPost.id, {
+            userId: 'comm3',
+            username: 'Budi',
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Budi',
+            text: 'Recommended! Saya sudah pernah pakai jasanya',
+          });
+        }
+        
+        if (index === 2) {
+          const posts = useStore.getState().posts;
+          const thirdPost = posts[2];
+          
+          useStore.getState().addBid(thirdPost.id, {
+            userId: 'bidder5',
+            username: 'PhotoExpert',
+            amount: 2000000,
+            message: 'Dokumentasi lengkap + editing profesional',
+          });
+          useStore.getState().addBid(thirdPost.id, {
+            userId: 'bidder6',
+            username: 'WeddingPhoto',
+            amount: 3500000,
+            message: 'Spesialis wedding photography',
+          });
+          
+          useStore.getState().addComment(thirdPost.id, {
+            userId: 'comm4',
+            username: 'Rina',
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Rina',
+            text: 'Hasil fotonya bagus banget! 📸',
+          });
+        }
+        
+        if (index === 3) {
+          const posts = useStore.getState().posts;
+          const fourthPost = posts[3];
+          
+          useStore.getState().addComment(fourthPost.id, {
+            userId: 'comm5',
+            username: 'Dedi',
+            avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Dedi',
+            text: 'Bisa bikin aplikasi mobile juga?',
+          });
+        }
       });
     }
   }, []);

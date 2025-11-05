@@ -46,6 +46,7 @@ interface AppState {
   searchQuery: string;
   selectedCategory: string;
   setCurrentUser: (user: User) => void;
+  updateCurrentUser: (updates: Partial<User>) => void;
   addPost: (post: Omit<Post, 'id' | 'likes' | 'comments' | 'bids' | 'createdAt'>) => void;
   toggleLike: (postId: string, userId: string) => void;
   addComment: (postId: string, comment: Omit<Comment, 'id' | 'createdAt'>) => void;
@@ -77,6 +78,17 @@ export const useStore = create<AppState>((set, get) => ({
     const data = getStoredData() || {};
     data.currentUser = user;
     saveToLocalStorage(data);
+  },
+  
+  updateCurrentUser: (updates: Partial<User>) => {
+    set((state) => {
+      if (!state.currentUser) return state;
+      const updatedUser = { ...state.currentUser, ...updates };
+      const data = getStoredData() || {};
+      data.currentUser = updatedUser;
+      saveToLocalStorage(data);
+      return { currentUser: updatedUser };
+    });
   },
   
   addPost: (post) => {

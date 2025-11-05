@@ -2,6 +2,7 @@ import { useLocation } from 'wouter';
 import { useStore } from '@/lib/store';
 import ProfileHeader from '@/components/ProfileHeader';
 import FeedCard from '@/components/FeedCard';
+import EditProfileSheet from '@/components/EditProfileSheet';
 import BottomNav from '@/components/BottomNav';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,10 +12,11 @@ import BidSheet from '@/components/BidSheet';
 
 export default function Profile() {
   const [, setLocation] = useLocation();
-  const { currentUser, posts, toggleLike, addComment, addBid } = useStore();
+  const { currentUser, posts, toggleLike, addComment, addBid, updateCurrentUser } = useStore();
   const [selectedPost, setSelectedPost] = useState<string | null>(null);
   const [showComments, setShowComments] = useState(false);
   const [showBids, setShowBids] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   const myPosts = posts.filter(p => p.userId === currentUser?.id);
   const likedPosts = posts.filter(p => currentUser && p.likes.includes(currentUser.id));
@@ -59,6 +61,10 @@ export default function Profile() {
 
   const selectedPostData = posts.find(p => p.id === selectedPost);
 
+  const handleSaveProfile = (data: { username: string; bio: string; avatar: string }) => {
+    updateCurrentUser(data);
+  };
+
   if (!currentUser) {
     return (
       <div className="min-h-screen bg-background pb-20 flex items-center justify-center">
@@ -84,7 +90,7 @@ export default function Profile() {
             bio={currentUser.bio}
             tokens={currentUser.tokens}
             postCount={myPosts.length}
-            onEditProfile={() => console.log('Edit profile')}
+            onEditProfile={() => setShowEditProfile(true)}
           />
 
           <Tabs defaultValue="posts" className="w-full">
@@ -160,6 +166,13 @@ export default function Profile() {
           />
         </>
       )}
+
+      <EditProfileSheet
+        isOpen={showEditProfile}
+        onClose={() => setShowEditProfile(false)}
+        currentUser={currentUser}
+        onSave={handleSaveProfile}
+      />
 
       <BottomNav />
     </div>

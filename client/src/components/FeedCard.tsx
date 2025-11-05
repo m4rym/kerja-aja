@@ -86,62 +86,68 @@ export default function FeedCard({
         </div>
       </div>
 
-      <div className="border-t border-card-border px-4 py-3 flex items-center justify-between bg-card/50">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onLike?.();
-            }}
-            className="flex items-center gap-1.5 hover-elevate rounded-md px-2 py-1"
-            data-testid={`button-like-${post.id}`}
-          >
-            <Heart 
-              className={`w-5 h-5 transition-all ${
-                isLiked ? 'fill-destructive text-destructive scale-110' : 'text-muted-foreground'
-              }`} 
-            />
-            <span className={`text-sm font-medium ${isLiked ? 'text-destructive' : ''}`}>
-              {post.likes.length}
-            </span>
-          </button>
+      <div className="border-t border-card-border px-4 py-3 space-y-2 bg-card/50">
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <span data-testid={`text-bid-count-${post.id}`}>
+            {post.bids.length} {post.bids.length === 1 ? 'pelamar' : 'pelamar'}
+          </span>
+          <span data-testid={`text-interaction-count-${post.id}`}>
+            {post.likes.length} suka • {post.comments.length} komentar
+          </span>
+        </div>
+        
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onLike?.();
+              }}
+              className="flex items-center gap-1.5 hover-elevate rounded-md px-2 py-1"
+              data-testid={`button-like-${post.id}`}
+            >
+              <Heart 
+                className={`w-5 h-5 transition-all ${
+                  isLiked ? 'fill-destructive text-destructive scale-110' : 'text-muted-foreground'
+                }`} 
+              />
+            </button>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              onComment?.();
-            }}
-            className="flex items-center gap-1.5 hover-elevate rounded-md px-2 py-1"
-            data-testid={`button-comment-${post.id}`}
-          >
-            <MessageCircle className="w-5 h-5 text-muted-foreground" />
-            <span className="text-sm font-medium">{post.comments.length}</span>
-          </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onComment?.();
+              }}
+              className="flex items-center gap-1.5 hover-elevate rounded-md px-2 py-1"
+              data-testid={`button-comment-${post.id}`}
+            >
+              <MessageCircle className="w-5 h-5 text-muted-foreground" />
+            </button>
 
-          <button
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onBid?.();
+              }}
+              className="flex items-center gap-1.5 hover-elevate rounded-md px-2 py-1"
+              data-testid={`button-bid-${post.id}`}
+            >
+              <Tag className="w-5 h-5 text-muted-foreground" />
+            </button>
+          </div>
+
+          <Button 
+            size="sm" 
+            variant="default"
             onClick={(e) => {
               e.stopPropagation();
               onBid?.();
             }}
-            className="flex items-center gap-1.5 hover-elevate rounded-md px-2 py-1"
-            data-testid={`button-bid-${post.id}`}
+            data-testid={`button-bid-action-${post.id}`}
           >
-            <Tag className="w-5 h-5 text-muted-foreground" />
-            <span className="text-sm font-medium">{post.bids.length}</span>
-          </button>
+            Tawar
+          </Button>
         </div>
-
-        <Button 
-          size="sm" 
-          variant="default"
-          onClick={(e) => {
-            e.stopPropagation();
-            onBid?.();
-          }}
-          data-testid={`button-bid-action-${post.id}`}
-        >
-          Tawar
-        </Button>
       </div>
     </Card>
   );
