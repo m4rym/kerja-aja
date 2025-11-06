@@ -1,40 +1,48 @@
-import { useState } from 'react';
-import { X, Upload, Image as ImageIcon } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
+import { useState } from "react";
+import { X, Upload, Image as ImageIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 interface UploadSheetProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: { image: string; description: string; category: string }) => void;
+  onSubmit: (data: {
+    image: string;
+    description: string;
+    category: string;
+  }) => void;
 }
 
 const categories = [
-  'Desain Grafis',
-  'Pemrograman',
-  'Fotografi',
-  'Videografi',
-  'Penulisan',
-  'Marketing',
-  'Renovasi',
-  'Kerajinan',
-  'Katering',
-  'Lainnya',
+  "Desain Grafis",
+  "Pemrograman",
+  "Fotografi",
+  "Videografi",
+  "Penulisan",
+  "Marketing",
+  "Renovasi",
+  "Kerajinan",
+  "Katering",
+  "Lainnya",
 ];
 
-export default function UploadSheet({ isOpen, onClose, onSubmit }: UploadSheetProps) {
-  const [imagePreview, setImagePreview] = useState('');
-  const [description, setDescription] = useState('');
-  const [category, setCategory] = useState('');
+export default function UploadSheet({
+  isOpen,
+  onClose,
+  onSubmit,
+}: UploadSheetProps) {
+  const [imagePreview, setImagePreview] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("");
 
   if (!isOpen) return null;
 
@@ -57,22 +65,22 @@ export default function UploadSheet({ isOpen, onClose, onSubmit }: UploadSheetPr
         description: description.trim(),
         category,
       });
-      setImagePreview('');
-      setDescription('');
-      setCategory('');
+      setImagePreview("");
+      setDescription("");
+      setCategory("");
       onClose();
     }
   };
 
   return (
     <>
-      <div 
+      <div
         className="fixed inset-0 bg-black/50 z-50 animate-in fade-in"
         onClick={onClose}
         data-testid="overlay-upload-sheet"
       />
-      
-      <div className="fixed inset-x-0 bottom-0 z-50 bg-background rounded-t-2xl shadow-xl animate-in slide-in-from-bottom max-h-[90vh] flex flex-col">
+
+      <div className="pb-16 fixed inset-x-0 bottom-0 z-50 bg-background rounded-t-2xl shadow-xl animate-in slide-in-from-bottom max-h-[90vh] flex flex-col">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-semibold text-lg" data-testid="text-upload-title">
             Unggah Pekerjaan Baru
@@ -87,15 +95,18 @@ export default function UploadSheet({ isOpen, onClose, onSubmit }: UploadSheetPr
           </Button>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-y-auto p-4 space-y-4"
+        >
           <div>
             <Label htmlFor="image-upload">Foto/Video Pekerjaan</Label>
             <div className="mt-2">
               {imagePreview ? (
                 <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-dashed border-primary">
-                  <img 
-                    src={imagePreview} 
-                    alt="Preview" 
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
                     className="w-full h-full object-cover"
                     data-testid="img-preview"
                   />
@@ -104,7 +115,7 @@ export default function UploadSheet({ isOpen, onClose, onSubmit }: UploadSheetPr
                     size="icon"
                     variant="destructive"
                     className="absolute top-2 right-2"
-                    onClick={() => setImagePreview('')}
+                    onClick={() => setImagePreview("")}
                     data-testid="button-remove-image"
                   >
                     <X className="w-4 h-4" />
@@ -117,8 +128,12 @@ export default function UploadSheet({ isOpen, onClose, onSubmit }: UploadSheetPr
                   data-testid="label-upload-area"
                 >
                   <ImageIcon className="w-12 h-12 text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground font-medium">Klik untuk unggah</p>
-                  <p className="text-xs text-muted-foreground mt-1">JPG, PNG, atau Video</p>
+                  <p className="text-sm text-muted-foreground font-medium">
+                    Klik untuk unggah
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    JPG, PNG, atau Video
+                  </p>
                   <Input
                     id="image-upload"
                     type="file"
@@ -161,8 +176,8 @@ export default function UploadSheet({ isOpen, onClose, onSubmit }: UploadSheetPr
             />
           </div>
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             className="w-full"
             disabled={!imagePreview || !description.trim() || !category}
             data-testid="button-submit-post"

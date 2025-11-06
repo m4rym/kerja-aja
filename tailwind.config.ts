@@ -2,13 +2,13 @@ import type { Config } from "tailwindcss";
 
 export default {
   darkMode: ["class"],
-  content: ["./client/index.html", "./client/src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
       borderRadius: {
-        lg: ".5625rem", /* 9px */
-        md: ".375rem", /* 6px */
-        sm: ".1875rem", /* 3px */
+        lg: ".5625rem" /* 9px */,
+        md: ".375rem" /* 6px */,
+        sm: ".1875rem" /* 3px */,
       },
       colors: {
         // Flat / base colors (regular buttons)
@@ -73,7 +73,7 @@ export default {
         "sidebar-accent": {
           DEFAULT: "hsl(var(--sidebar-accent) / <alpha-value>)",
           foreground: "hsl(var(--sidebar-accent-foreground) / <alpha-value>)",
-          border: "var(--sidebar-accent-border)"
+          border: "var(--sidebar-accent-border)",
         },
         status: {
           online: "rgb(34 197 94)",
@@ -88,20 +88,20 @@ export default {
         mono: ["var(--font-mono)"],
       },
       fontSize: {
-        'xs': ['0.6875rem', { lineHeight: '0.875rem' }],
-        'sm': ['0.8125rem', { lineHeight: '1.125rem' }],
-        'base': ['0.9375rem', { lineHeight: '1.375rem' }],
-        'lg': ['1.0625rem', { lineHeight: '1.5rem' }],
-        'xl': ['1.1875rem', { lineHeight: '1.625rem' }],
-        '2xl': ['1.375rem', { lineHeight: '1.875rem' }],
+        xs: ["0.6875rem", { lineHeight: "0.875rem" }],
+        sm: ["0.8125rem", { lineHeight: "1.125rem" }],
+        base: ["0.9375rem", { lineHeight: "1.375rem" }],
+        lg: ["1.0625rem", { lineHeight: "1.5rem" }],
+        xl: ["1.1875rem", { lineHeight: "1.625rem" }],
+        "2xl": ["1.375rem", { lineHeight: "1.875rem" }],
       },
       screens: {
-        'xs': '475px',
-        'sm': '640px',
-        'md': '768px',
-        'lg': '1024px',
-        'xl': '1280px',
-        '2xl': '1536px',
+        xs: "475px",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
       },
       keyframes: {
         "accordion-down": {
