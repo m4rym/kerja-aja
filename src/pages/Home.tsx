@@ -7,12 +7,12 @@ import BidSheet from "@/components/BidSheet";
 import BottomNav from "@/components/BottomNav";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sparkles } from "lucide-react";
-import designImage from "@assets/generated_images/Graphic_design_work_showcase_465d6773.png";
-import renovationImage from "@assets/generated_images/Home_renovation_project_afc21a20.png";
-import photographyImage from "@assets/generated_images/Photography_services_showcase_f5a76139.png";
-import webdevImage from "@assets/generated_images/Web_development_workspace_22df9aa6.png";
-import craftsImage from "@assets/generated_images/Handmade_crafts_display_de5e7bb0.png";
-import cateringImage from "@assets/generated_images/Catering_services_showcase_d0eca804.png";
+import designImage from "@/assets/generated_images/Graphic_design_work_showcase_465d6773.png";
+import renovationImage from "@/assets/generated_images/Home_renovation_project_afc21a20.png";
+import photographyImage from "@/assets/generated_images/Photography_services_showcase_f5a76139.png";
+import webdevImage from "@/assets/generated_images/Web_development_workspace_22df9aa6.png";
+import craftsImage from "@/assets/generated_images/Handmade_crafts_display_de5e7bb0.png";
+import cateringImage from "@/assets/generated_images/Catering_services_showcase_d0eca804.png";
 
 export default function Home() {
   const [, setLocation] = useLocation();
@@ -50,55 +50,73 @@ export default function Home() {
           userId: "user2",
           username: "DesainKreatif",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Kreatif",
-          image: designImage,
+          images: [designImage, webdevImage],
           description:
             "Butuh desainer grafis profesional untuk branding bisnis Anda? Saya punya pengalaman 5+ tahun dalam desain logo, packaging, dan visual identity. Portfolio lengkap tersedia! 🎨",
-          category: "Desain Grafis",
+          categories: ["Desain Grafis", "Marketing"],
+          location: "Jakarta Selatan",
+          budget: "Rp 500.000 - Rp 1.000.000",
+          type: "cari-jasa" as const,
         },
         {
           userId: "user3",
           username: "TukangAhli",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Tukang",
-          image: renovationImage,
+          images: [renovationImage],
           description:
             "Jasa renovasi rumah & kantor terpercaya! Pengalaman 10 tahun, hasil rapi dan tepat waktu. Konsultasi gratis untuk proyek Anda.",
-          category: "Renovasi",
+          categories: ["Renovasi"],
+          location: "Bandung",
+          budget: "Mulai Rp 5.000.000",
+          type: "tawarkan-jasa" as const,
         },
         {
           userId: "user4",
           username: "FotograferPro",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Foto",
-          image: photographyImage,
+          images: [photographyImage, designImage, craftsImage],
           description:
             "Mencari fotografer untuk event wedding, birthday, atau corporate? Peralatan lengkap & hasil maksimal dijamin! 📸",
-          category: "Fotografi",
+          categories: ["Fotografi", "Videografi"],
+          location: "Jakarta Pusat",
+          budget: "Rp 2.000.000 - Rp 5.000.000",
+          type: "cari-jasa" as const,
         },
         {
           userId: "user5",
           username: "CodeMaster",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Code",
-          image: webdevImage,
+          images: [webdevImage],
           description:
             "Jasa pembuatan website & aplikasi mobile. Teknologi terkini, responsive design, dan maintenance support. Gratis konsultasi!",
-          category: "Pemrograman",
+          categories: ["Pemrograman", "Desain Grafis"],
+          location: "Surabaya",
+          budget: "Rp 10.000.000 - Rp 15.000.000",
+          type: "tawarkan-jasa" as const,
         },
         {
           userId: "user6",
           username: "CraftLover",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Craft",
-          image: craftsImage,
+          images: [craftsImage, cateringImage],
           description:
             "Kerajinan tangan unik & custom! Cocok untuk hadiah spesial, dekorasi rumah, atau souvenir acara. Bisa request design sendiri! ✨",
-          category: "Kerajinan",
+          categories: ["Kerajinan"],
+          location: "Yogyakarta",
+          budget: "Rp 50.000 - Rp 500.000",
+          type: "tawarkan-jasa" as const,
         },
         {
           userId: "user7",
           username: "ChefCatering",
           avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Chef",
-          image: cateringImage,
+          images: [cateringImage],
           description:
             "Catering untuk segala acara! Menu bervariasi, higienis, dan lezat. Paket mulai dari 50 porsi. Pesan sekarang!",
-          category: "Katering",
+          categories: ["Katering"],
+          location: "Tangerang",
+          budget: "Rp 50.000/porsi",
+          type: "tawarkan-jasa" as const,
         },
       ];
 

@@ -14,15 +14,18 @@ export default function Upload() {
     }
   }, [currentUser, setLocation]);
 
-  const handleSubmit = (data: { image: string; description: string; category: string }) => {
+  const handleSubmit = (data: { image: string; description: string; category: string; location: string; budget: string; type: 'cari-jasa' | 'tawarkan-jasa' }) => {
     if (currentUser) {
       addPost({
         userId: currentUser.id,
         username: currentUser.username,
         avatar: currentUser.avatar,
-        image: data.image,
+        images: [data.image],
         description: data.description,
-        category: data.category,
+        categories: [data.category],
+        location: data.location,
+        budget: data.budget,
+        type: data.type,
       });
       setLocation('/');
     }

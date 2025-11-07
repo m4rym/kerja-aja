@@ -4,13 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface UploadSheetProps {
   isOpen: boolean;
@@ -19,6 +12,9 @@ interface UploadSheetProps {
     image: string;
     description: string;
     category: string;
+    location: string;
+    budget: string;
+    type: 'cari-jasa' | 'tawarkan-jasa';
   }) => void;
 }
 
@@ -40,34 +36,61 @@ export default function UploadSheet({
   onClose,
   onSubmit,
 }: UploadSheetProps) {
-  const [imagePreview, setImagePreview] = useState("");
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [customCategory, setCustomCategory] = useState("");
+  const [location, setLocation] = useState("");
+  const [budget, setBudget] = useState("");
+  const [type, setType] = useState<'cari-jasa' | 'tawarkan-jasa'>('cari-jasa');
 
   if (!isOpen) return null;
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    const files = e.target.files;
+    if (files) {
+      Array.from(files).forEach((file) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setImagePreviews((prev) => [...prev, reader.result as string]);
+        };
+        reader.readAsDataURL(file);
+      });
     }
+  };
+
+  const removeImage = (index: number) => {
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const toggleCategory = (cat: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+    );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (imagePreview && description.trim() && category) {
+    if (imagePreviews.length > 0 && description.trim() && selectedCategories.length > 0 && location.trim() && budget.trim()) {
+      const finalCategories = selectedCategories.includes('Lainnya') && customCategory.trim()
+        ? [...selectedCategories.filter(c => c !== 'Lainnya'), customCategory.trim()]
+        : selectedCategories;
+      
       onSubmit({
-        image: imagePreview,
+        image: imagePreviews[0],
         description: description.trim(),
-        category,
+        category: finalCategories[0],
+        location: location.trim(),
+        budget: budget.trim(),
+        type,
       });
-      setImagePreview("");
+      setImagePreviews([]);
       setDescription("");
-      setCategory("");
+      setSelectedCategories([]);
+      setCustomCategory("");
+      setLocation("");
+      setBudget("");
+      setType('cari-jasa');
       onClose();
     }
   };
@@ -100,36 +123,44 @@ export default function UploadSheet({
           className="flex-1 overflow-y-auto p-4 space-y-4"
         >
           <div>
-            <Label htmlFor="image-upload">Foto/Video Pekerjaan</Label>
-            <div className="mt-2">
-              {imagePreview ? (
-                <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-dashed border-primary">
-                  <img
-                    src={imagePreview}
-                    alt="Preview"
-                    className="w-full h-full object-cover"
-                    data-testid="img-preview"
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="destructive"
-                    className="absolute top-2 right-2"
-                    onClick={() => setImagePreview("")}
-                    data-testid="button-remove-image"
-                  >
-                    <X className="w-4 h-4" />
-                  </Button>
+            <Label htmlFor="image-upload">Foto/Video Pekerjaan (Maksimal 5)</Label>
+            <div className="mt-2 space-y-2">
+              {imagePreviews.length > 0 && (
+                <div className="grid grid-cols-2 gap-2">
+                  {imagePreviews.map((preview, index) => (
+                    <div
+                      key={index}
+                      className="relative aspect-square rounded-lg overflow-hidden border-2 border-dashed border-primary"
+                    >
+                      <img
+                        src={preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-full object-cover"
+                        data-testid={`img-preview-${index}`}
+                      />
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="destructive"
+                        className="absolute top-2 right-2"
+                        onClick={() => removeImage(index)}
+                        data-testid={`button-remove-image-${index}`}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-              ) : (
+              )}
+              {imagePreviews.length < 5 && (
                 <label
                   htmlFor="image-upload"
-                  className="flex flex-col items-center justify-center aspect-square rounded-lg border-2 border-dashed border-muted-foreground/50 hover-elevate cursor-pointer"
+                  className="flex flex-col items-center justify-center aspect-video rounded-lg border-2 border-dashed border-muted-foreground/50 hover-elevate cursor-pointer"
                   data-testid="label-upload-area"
                 >
                   <ImageIcon className="w-12 h-12 text-muted-foreground mb-2" />
                   <p className="text-sm text-muted-foreground font-medium">
-                    Klik untuk unggah
+                    Klik untuk unggah ({imagePreviews.length}/5)
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">
                     JPG, PNG, atau Video
@@ -138,6 +169,7 @@ export default function UploadSheet({
                     id="image-upload"
                     type="file"
                     accept="image/*,video/*"
+                    multiple
                     className="hidden"
                     onChange={handleImageChange}
                     data-testid="input-file"
@@ -148,19 +180,69 @@ export default function UploadSheet({
           </div>
 
           <div>
-            <Label htmlFor="category">Kategori</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="mt-2" data-testid="select-category">
-                <SelectValue placeholder="Pilih kategori" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>
-                    {cat}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <Label htmlFor="type">Jenis</Label>
+            <select
+              id="type"
+              value={type}
+              onChange={(e) => setType(e.target.value as 'cari-jasa' | 'tawarkan-jasa')}
+              className="w-full mt-2 px-3 py-2 border border-input rounded-md bg-background text-sm"
+              data-testid="select-type"
+            >
+              <option value="cari-jasa">Cari Jasa</option>
+              <option value="tawarkan-jasa">Tawarkan Jasa</option>
+            </select>
+          </div>
+
+          <div>
+            <Label>Kategori (Pilih satu atau lebih)</Label>
+            <div className="mt-2 flex flex-wrap gap-2" data-testid="category-selection">
+              {categories.map((cat) => (
+                <Button
+                  key={cat}
+                  type="button"
+                  variant={selectedCategories.includes(cat) ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => toggleCategory(cat)}
+                  data-testid={`button-category-${cat}`}
+                  className="text-xs"
+                >
+                  {cat}
+                </Button>
+              ))}
+            </div>
+            {selectedCategories.includes('Lainnya') && (
+              <Input
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                placeholder="Masukkan kategori kustom"
+                className="mt-2"
+                data-testid="input-custom-category"
+              />
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor="location">Lokasi</Label>
+            <Input
+              id="location"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Masukkan lokasi"
+              className="mt-2"
+              data-testid="input-location"
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="budget">Budget</Label>
+            <Input
+              id="budget"
+              value={budget}
+              onChange={(e) => setBudget(e.target.value)}
+              placeholder="Masukkan budget (contoh: Rp 500.000 - Rp 1.000.000)"
+              className="mt-2"
+              data-testid="input-budget"
+            />
           </div>
 
           <div>
@@ -179,7 +261,14 @@ export default function UploadSheet({
           <Button
             type="submit"
             className="w-full"
-            disabled={!imagePreview || !description.trim() || !category}
+            disabled={
+              imagePreviews.length === 0 || 
+              !description.trim() || 
+              selectedCategories.length === 0 || 
+              !location.trim() || 
+              !budget.trim() ||
+              (selectedCategories.includes('Lainnya') && !customCategory.trim())
+            }
             data-testid="button-submit-post"
           >
             <Upload className="w-4 h-4 mr-2" />
