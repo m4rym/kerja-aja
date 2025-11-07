@@ -19,7 +19,9 @@ export default function Home() {
   const {
     posts,
     currentUser,
+    savedPosts,
     toggleLike,
+    toggleSavePost,
     addComment,
     addBid,
     initializeFromLocalStorage,
@@ -231,6 +233,12 @@ export default function Home() {
     }
   };
 
+  const handleSavePost = (postId: string) => {
+    if (currentUser) {
+      toggleSavePost(postId, currentUser.id);
+    }
+  };
+
   const handleCommentOpen = (postId: string) => {
     setSelectedPost(postId);
     setShowComments(true);
@@ -292,9 +300,11 @@ export default function Home() {
                 key={post.id}
                 post={post}
                 currentUserId={currentUser?.id}
+                isSaved={savedPosts.includes(post.id)}
                 onLike={() => handleLike(post.id)}
                 onComment={() => handleCommentOpen(post.id)}
                 onBid={() => handleBidOpen(post.id)}
+                onSave={() => handleSavePost(post.id)}
                 onClick={() => setLocation(`/post/${post.id}`)}
               />
             ))

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useRoute, useLocation } from "wouter";
 import { useStore } from "@/lib/store";
-import { ArrowLeft, Heart, MessageCircle, Tag } from "lucide-react";
+import { ArrowLeft, Heart, MessageCircle, Tag, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +19,7 @@ import BottomNav from "@/components/BottomNav";
 export default function PostDetail() {
   const [, params] = useRoute("/post/:id");
   const [, setLocation] = useLocation();
-  const { posts, currentUser, toggleLike, addComment, addBid } = useStore();
+  const { posts, currentUser, savedPosts, toggleLike, toggleSavePost, addComment, addBid } = useStore();
   const [showComments, setShowComments] = useState(false);
   const [showBids, setShowBids] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
@@ -49,10 +49,17 @@ export default function PostDetail() {
   }
 
   const isLiked = currentUser ? post.likes.includes(currentUser.id) : false;
+  const isSaved = savedPosts.includes(post.id);
 
   const handleLike = () => {
     if (currentUser) {
       toggleLike(post.id, currentUser.id);
+    }
+  };
+
+  const handleSavePost = () => {
+    if (currentUser) {
+      toggleSavePost(post.id, currentUser.id);
     }
   };
 
@@ -233,6 +240,20 @@ export default function PostDetail() {
                 <span className="font-medium text-xs">
                   {post.bids.length} Penawaran
                 </span>
+              </button>
+
+              <button
+                onClick={handleSavePost}
+                className="flex items-center gap-2 hover-elevate rounded-md px-3 py-2"
+                data-testid="button-detail-save"
+              >
+                <Bookmark
+                  className={`w-4 h-4 transition-all ${
+                    isSaved
+                      ? "fill-primary text-primary"
+                      : "text-muted-foreground"
+                  }`}
+                />
               </button>
             </div>
 

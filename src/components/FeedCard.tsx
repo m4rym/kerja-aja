@@ -1,12 +1,4 @@
-import {
-  Heart,
-  MessageCircle,
-  MoreVertical,
-  Eye,
-  Bookmark,
-  Share2,
-  Flag,
-} from "lucide-react";
+import { Heart, MessageCircle, MoreVertical, Bookmark } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -17,40 +9,42 @@ import {
   CarouselItem,
   type CarouselApi,
 } from "@/components/ui/carousel";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
+
 import type { Post } from "@/lib/store";
+
 import { useState, useEffect } from "react";
+import PostActionsSheet from "@/components/PostActionsSheet";
+import { useToast } from "@/hooks/use-toast";
 
 interface FeedCardProps {
   post: Post;
   currentUserId?: string;
+  isSaved?: boolean;
   onLike?: () => void;
   onComment?: () => void;
   onBid?: () => void;
+  onSave?: () => void;
   onClick?: () => void;
 }
 
 export default function FeedCard({
   post,
   currentUserId,
+  isSaved = false,
   onLike,
   onComment,
   onBid,
+  onSave,
   onClick,
 }: FeedCardProps) {
   const [showFullDesc, setShowFullDesc] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [carouselApi, setCarouselApi] = useState<CarouselApi>();
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
-  
+
+  const [showActionsSheet, setShowActionsSheet] = useState(false);
+  const { toast } = useToast();
+
   const isLiked = currentUserId ? post.likes.includes(currentUserId) : false;
   const truncatedDesc =
     post.description.length > 100
@@ -100,7 +94,7 @@ export default function FeedCard({
             variant="ghost"
             onClick={(e) => {
               e.stopPropagation();
-              setMenuOpen(true);
+              setShowActionsSheet(true);
             }}
             data-testid={`button-more-${post.id}`}
           >
@@ -138,8 +132,8 @@ export default function FeedCard({
                     carouselApi?.scrollTo(index);
                   }}
                   className={`h-2 rounded-full transition-all ${
-                    index === current 
-                      ? "w-6 bg-primary" 
+                    index === current
+                      ? "w-6 bg-primary"
                       : "w-2 bg-background/60"
                   }`}
                   aria-label={`Go to slide ${index + 1}`}
@@ -238,6 +232,23 @@ export default function FeedCard({
             >
               <MessageCircle className="w-5 h-5 text-muted-foreground" />
             </button>
+
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onSave?.();
+              }}
+              className="flex items-center gap-1.5 hover-elevate rounded-md px-2 py-1"
+              data-testid={`button-save-${post.id}`}
+            >
+              <Bookmark
+                className={`w-5 h-5 transition-all ${
+                  isSaved
+                    ? "fill-primary text-primary scale-110"
+                    : "text-muted-foreground"
+                }`}
+              />
+            </button>
           </div>
 
           <Button
@@ -254,57 +265,34 @@ export default function FeedCard({
         </div>
       </div>
 
-      <Drawer open={menuOpen} onOpenChange={setMenuOpen}>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Opsi</DrawerTitle>
-          </DrawerHeader>
-          <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
-            <div className="space-y-2">
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() => {
-                  setMenuOpen(false);
-                  onClick?.();
-                }}
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Lihat Detail
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() => setMenuOpen(false)}
-              >
-                <Bookmark className="w-4 h-4 mr-2" />
-                Simpan
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start"
-                onClick={() => setMenuOpen(false)}
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                Bagikan
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-destructive hover:text-destructive"
-                onClick={() => setMenuOpen(false)}
-              >
-                <Flag className="w-4 h-4 mr-2" />
-                Laporkan
-              </Button>
-            </div>
-          </div>
-          <DrawerFooter>
-            <DrawerClose asChild>
-              <Button variant="outline">Tutup</Button>
-            </DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+      <PostActionsSheet
+        isOpen={showActionsSheet}
+        onClose={() => setShowActionsSheet(false)}
+        onDetail={() => onClick?.()}
+        onReport={() => {
+          toast({
+            title: "Laporan Dikirim",
+            description: "Terima kasih telah melaporkan postingan ini.",
+          });
+        }}
+        onShare={() => {
+          if (navigator.share) {
+            navigator.share({
+              title: post.description,
+              text: `Lihat pekerjaan ini di KerjaAja: ${post.description}`,
+              url: window.location.href,
+            });
+          } else {
+            navigator.clipboard.writeText(window.location.href);
+            toast({
+              title: "Link Disalin",
+              description: "Link postingan telah disalin ke clipboard.",
+            });
+          }
+        }}
+        onSave={() => onSave?.()}
+        isSaved={isSaved}
+      />
     </Card>
   );
 }
