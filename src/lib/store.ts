@@ -46,6 +46,7 @@ export interface Bid {
 interface AppState {
   currentUser: User | null;
   posts: Post[];
+  savedPosts: string[];
   searchQuery: string;
   selectedCategory: string;
   setCurrentUser: (user: User) => void;
@@ -53,6 +54,7 @@ interface AppState {
   logout: () => void;
   addPost: (post: Omit<Post, 'id' | 'likes' | 'comments' | 'bids' | 'createdAt'>) => void;
   toggleLike: (postId: string, userId: string) => void;
+  toggleSavePost: (postId: string, userId: string) => void;
   addComment: (postId: string, comment: Omit<Comment, 'id' | 'createdAt'>) => void;
   addBid: (postId: string, bid: Omit<Bid, 'id' | 'createdAt'>) => void;
   setSearchQuery: (query: string) => void;
@@ -74,6 +76,7 @@ const saveToLocalStorage = (data: any) => {
 export const useStore = create<AppState>((set, get) => ({
   currentUser: null,
   posts: [],
+  savedPosts: [],
   searchQuery: '',
   selectedCategory: 'Semua',
   
@@ -131,10 +134,25 @@ export const useStore = create<AppState>((set, get) => ({
         return post;
       }),
     }));
-    
+
     const data = getStoredData() || {};
     data.posts = get().posts;
     saveToLocalStorage(data);
+  },
+
+  toggleSavePost: (postId, userId) => {
+    set((state) => {
+      const isSaved = state.savedPosts.includes(postId);
+      const savedPosts = isSaved
+        ? state.savedPosts.filter((id) => id !== postId)
+        : [...state.savedPosts, postId];
+
+      const data = getStoredData() || {};
+      data.savedPosts = savedPosts;
+      saveToLocalStorage(data);
+
+      return { savedPosts };
+    });
   },
   
   addComment: (postId, comment) => {
@@ -189,6 +207,7 @@ export const useStore = create<AppState>((set, get) => ({
       set({
         currentUser: data.currentUser || null,
         posts: data.posts || [],
+        savedPosts: data.savedPosts || [],
       });
     }
   },
