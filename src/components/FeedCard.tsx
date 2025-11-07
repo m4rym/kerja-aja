@@ -1,4 +1,12 @@
-import { Heart, MessageCircle, MoreVertical } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  MoreVertical,
+  Eye,
+  Bookmark,
+  Share2,
+  Flag,
+} from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -7,11 +15,18 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
+  type CarouselApi,
 } from "@/components/ui/carousel";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer";
 import type { Post } from "@/lib/store";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface FeedCardProps {
   post: Post;
@@ -31,16 +46,31 @@ export default function FeedCard({
   onClick,
 }: FeedCardProps) {
   const [showFullDesc, setShowFullDesc] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+  
   const isLiked = currentUserId ? post.likes.includes(currentUserId) : false;
   const truncatedDesc =
     post.description.length > 100
       ? post.description.substring(0, 100) + "..."
       : post.description;
 
+  useEffect(() => {
+    if (!carouselApi) return;
+
+    setCount(carouselApi.scrollSnapList().length);
+    setCurrent(carouselApi.selectedScrollSnap());
+
+    carouselApi.on("select", () => {
+      setCurrent(carouselApi.selectedScrollSnap());
+    });
+  }, [carouselApi]);
+
   return (
     <Card
       className="overflow-hidden hover-elevate cursor-pointer rounded-none shadow-none"
-      onClick={onClick}
       data-testid={`card-post-${post.id}`}
     >
       <div className="p-4 pb-3">
@@ -68,6 +98,10 @@ export default function FeedCard({
           <Button
             size="icon"
             variant="ghost"
+            onClick={(e) => {
+              e.stopPropagation();
+              setMenuOpen(true);
+            }}
             data-testid={`button-more-${post.id}`}
           >
             <MoreVertical className="w-4 h-4" />
@@ -75,28 +109,44 @@ export default function FeedCard({
         </div>
 
         {post.images && post.images.length > 1 ? (
-          <Carousel className="w-full mb-3">
-            <CarouselContent>
-              {post.images.map((image, index) => (
-                <CarouselItem key={index}>
-                  <div
-                    className="aspect-square rounded-lg overflow-hidden bg-muted"
-                    data-testid={`img-post-${post.id}-${index}`}
-                  >
-                    <img
-                      src={image}
-                      alt={`${post.description} - ${index + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </CarouselItem>
+          <div className="relative mb-3">
+            <Carousel className="w-full" setApi={setCarouselApi}>
+              <CarouselContent>
+                {post.images.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <div
+                      className="aspect-square rounded-lg overflow-hidden bg-muted"
+                      data-testid={`img-post-${post.id}-${index}`}
+                    >
+                      <img
+                        src={image}
+                        alt={`${post.description} - ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+            {/* Dots Indicator */}
+            <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-1.5">
+              {Array.from({ length: count }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    carouselApi?.scrollTo(index);
+                  }}
+                  className={`h-2 rounded-full transition-all ${
+                    index === current 
+                      ? "w-6 bg-primary" 
+                      : "w-2 bg-background/60"
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
               ))}
-            </CarouselContent>
-            <div className="absolute top-[50%] w-full flex justify-between">
-              <CarouselPrevious className="left-2 bg-slate-100" />
-              <CarouselNext className="right-2 bg-slate-100" />
             </div>
-          </Carousel>
+          </div>
         ) : (
           <div
             className="aspect-square rounded-lg overflow-hidden mb-3 bg-muted"
@@ -203,6 +253,58 @@ export default function FeedCard({
           </Button>
         </div>
       </div>
+
+      <Drawer open={menuOpen} onOpenChange={setMenuOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Opsi</DrawerTitle>
+          </DrawerHeader>
+          <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
+            <div className="space-y-2">
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onClick?.();
+                }}
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                Lihat Detail
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Bookmark className="w-4 h-4 mr-2" />
+                Simpan
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Bagikan
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-destructive hover:text-destructive"
+                onClick={() => setMenuOpen(false)}
+              >
+                <Flag className="w-4 h-4 mr-2" />
+                Laporkan
+              </Button>
+            </div>
+          </div>
+          <DrawerFooter>
+            <DrawerClose asChild>
+              <Button variant="outline">Tutup</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </Card>
   );
 }
