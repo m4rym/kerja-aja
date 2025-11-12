@@ -16,9 +16,7 @@ export default function Profile() {
   const {
     currentUser,
     posts,
-    savedPosts,
     toggleLike,
-    toggleSavePost,
     addComment,
     addBid,
     updateCurrentUser,
@@ -34,17 +32,10 @@ export default function Profile() {
   const likedPosts = posts.filter(
     (p) => currentUser && p.likes.includes(currentUser.id)
   );
-  const savedPostsList = posts.filter((p) => savedPosts.includes(p.id));
 
   const handleLike = (postId: string) => {
     if (currentUser) {
       toggleLike(postId, currentUser.id);
-    }
-  };
-
-  const handleSavePost = (postId: string) => {
-    if (currentUser) {
-      toggleSavePost(postId, currentUser.id);
     }
   };
 
@@ -131,14 +122,11 @@ export default function Profile() {
           />
 
           <Tabs defaultValue="posts" className="w-full">
-            <TabsList className="w-full grid grid-cols-3">
+            <TabsList className="w-full grid grid-cols-2">
               <TabsTrigger value="posts" data-testid="tab-my-posts">
-                Postingan
+                Postingan Saya
               </TabsTrigger>
               <TabsTrigger value="liked" data-testid="tab-liked-posts">
-                Disukai
-              </TabsTrigger>
-              <TabsTrigger value="saved" data-testid="tab-saved-posts">
                 Disimpan
               </TabsTrigger>
             </TabsList>
@@ -154,11 +142,9 @@ export default function Profile() {
                     key={post.id}
                     post={post}
                     currentUserId={currentUser.id}
-                    isSaved={savedPosts.includes(post.id)}
                     onLike={() => handleLike(post.id)}
                     onComment={() => handleCommentOpen(post.id)}
                     onBid={() => handleBidOpen(post.id)}
-                    onSave={() => handleSavePost(post.id)}
                     onClick={() => setLocation(`/post/${post.id}`)}
                   />
                 ))
@@ -178,35 +164,9 @@ export default function Profile() {
                     key={post.id}
                     post={post}
                     currentUserId={currentUser.id}
-                    isSaved={savedPosts.includes(post.id)}
                     onLike={() => handleLike(post.id)}
                     onComment={() => handleCommentOpen(post.id)}
                     onBid={() => handleBidOpen(post.id)}
-                    onSave={() => handleSavePost(post.id)}
-                    onClick={() => setLocation(`/post/${post.id}`)}
-                  />
-                ))
-              )}
-            </TabsContent>
-
-            <TabsContent value="saved" className="space-y-4 mt-4">
-              {savedPostsList.length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">
-                    Belum ada postingan yang disimpan
-                  </p>
-                </div>
-              ) : (
-                savedPostsList.map((post) => (
-                  <FeedCard
-                    key={post.id}
-                    post={post}
-                    currentUserId={currentUser.id}
-                    isSaved={savedPosts.includes(post.id)}
-                    onLike={() => handleLike(post.id)}
-                    onComment={() => handleCommentOpen(post.id)}
-                    onBid={() => handleBidOpen(post.id)}
-                    onSave={() => handleSavePost(post.id)}
                     onClick={() => setLocation(`/post/${post.id}`)}
                   />
                 ))

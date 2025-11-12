@@ -26,13 +26,11 @@ export default function Search() {
   const {
     posts,
     currentUser,
-    savedPosts,
     searchQuery,
     selectedCategory,
     setSearchQuery,
     setSelectedCategory,
     toggleLike,
-    toggleSavePost,
     addComment,
     addBid,
   } = useStore();
@@ -66,12 +64,6 @@ export default function Search() {
   const handleLike = (postId: string) => {
     if (currentUser) {
       toggleLike(postId, currentUser.id);
-    }
-  };
-
-  const handleSavePost = (postId: string) => {
-    if (currentUser) {
-      toggleSavePost(postId, currentUser.id);
     }
   };
 
@@ -238,11 +230,9 @@ export default function Search() {
                 key={post.id}
                 post={post}
                 currentUserId={currentUser?.id}
-                isSaved={savedPosts.includes(post.id)}
                 onLike={() => handleLike(post.id)}
                 onComment={() => handleCommentOpen(post.id)}
                 onBid={() => handleBidOpen(post.id)}
-                onSave={() => handleSavePost(post.id)}
                 onClick={() => setLocation(`/post/${post.id}`)}
               />
             ))}
